@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 2048-game
+  labels:
+    run: 2048-game
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: 2048-game
+  template:
+    metadata:
+      labels:
+        app: 2048-game
+    spec:
+      containers:
+      - image: public.ecr.aws/kishorj/docker-2048:latest
+        name: 2048-game
+        ports:
+          - containerPort: 80
+            protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "game-2048"
+spec:
+  type: LoadBalancer
+  ports:
+    - nodePort: 31001
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: 2048-game
